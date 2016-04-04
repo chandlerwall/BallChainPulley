@@ -37,11 +37,8 @@ echo(str("Pulley diameter: ", wheel_diameter));
 // Render
 pulley();
 
-translate([wheel_diameter + part_spacing, 0, 0])
-!pulleyByUnion();
-
 // Module declarations
-module pulleyByUnion()
+module pulley()
 {
     difference()
     {
@@ -99,58 +96,6 @@ module pulleyWheel()
             rotate([0, 0,(360/ball_count) * i])
             translate([wheel_diameter/2, 0, 0])
             sphere(r = ball_diameter/2, $fn = 32);
-        }
-    }
-}
-
-module pulley()
-{
-    difference()
-    {
-        cylinder(pulley_height, r = wheel_diameter/2, center=true);
-        
-        // Boss cutout
-        translate([0, 0, pulley_height/2])
-        difference()
-        {
-            cylinder(boss_height * 2, r = wheel_diameter, center=true);
-            cylinder(boss_height * 4, r = boss_diameter/2, center=true);
-        }
-        
-        // Shaft
-        cylinder(pulley_height * 2, r = shaft_diameter/2, center=true);
-        
-        // Holes for links between balls
-        translate([0, 0, pulley_height/-2 + wheel_height/2])
-        rotate_extrude(convexity = 10)
-        translate([wheel_diameter/2, 0, 0])
-        circle(r = link_diameter/2, center = true, $fn = 16);
-
-        // Balls
-        translate([0, 0, pulley_height/-2 + wheel_height/2])
-        for(i = [1:ball_count])
-        {   
-            rotate([0, 0,(360/ball_count) * i])       
-            translate([wheel_diameter/2,0,0])
-            sphere(r = ball_diameter/2, $fn = 32);
-        }
-        
-        // Screw and nut holes
-        translate([0, 0, pulley_height/2 - boss_height/2])
-        rotate([0, 0, 360])
-        {
-            translate([boss_diameter/2, 0, 0])
-            rotate([0 ,90 , 0])
-            cylinder(boss_diameter, r = screw_diameter/2, center = true);
-            
-            translate([shaft_diameter/2 + (boss_diameter/2 - shaft_diameter/2)/2 - nut_height/4, 0, 0])
-            {
-                rotate([0 , 90, 0])
-                cylinder(nut_height, r = nut_diameter/2, center = true, $fn = 6);
-                
-                translate([0, 0, boss_height / 2])
-                cube([nut_height, sin(60) * nut_diameter, boss_height], center = true);
-            }
         }
     }
 }
