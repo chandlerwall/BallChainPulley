@@ -4,6 +4,7 @@
 
 // Quality of cylinders/spheres
 $fn = 128;
+part_spacing = 10;
 
 // Motor dimensions
 shaft_diameter = 5.1; // 5 was measured (it was too tight)
@@ -19,6 +20,7 @@ screw_diameter = 3.05;
 nut_diameter = 6.15; // 6.06 was measaured (increased to 6.15 for ease of assembly)
 nut_height = 2.5; // 2.25 was measured (increased to 2.5 for ease of assembly)
 
+
 // Calculate dimensions
 wheel_diameter = ball_count * ball_spacing/PI;
 wheel_height = ball_diameter * 1.75;
@@ -26,15 +28,81 @@ boss_diameter = shaft_diameter + (nut_height * 2) * 2.5;
 boss_height = nut_diameter;
 pulley_height = wheel_height + boss_height;
 
+
 // Diagnostic output
 echo(str("Pulley height: ", pulley_height));
 echo(str("Pulley diameter: ", wheel_diameter));
 
+
 // Render
-translate([0, 0, pulley_height/2])
 pulley();
 
-// Declarations
+translate([wheel_diameter + part_spacing, 0, 0])
+!pulleyByUnion();
+
+// Module declarations
+module pulleyByUnion()
+{
+    difference()
+    {
+        union()
+        {
+            pulleyWheel();
+            
+            translate([0, 0, wheel_height])
+            pulleyBoss();
+        }
+
+        // Motor shaft
+        cylinder(pulley_height * 2, r = shaft_diameter/2, center=true);
+
+        // Screw and nut holes
+        translate([0, 0, wheel_height])
+        {
+            translate([boss_diameter/2, 0, 0])
+            rotate([0 ,90 , 0])
+            cylinder(boss_diameter, r = screw_diameter/2, center = true);
+            
+            translate([shaft_diameter/2 + (boss_diameter/2 - shaft_diameter/2)/2 - nut_height/4, 0, 0])
+            {
+                rotate([0 , 90, 0])
+                cylinder(nut_height, r = nut_diameter/2, center = true, $fn = 6);
+                
+                translate([0, 0, boss_height / 2])
+                cube([nut_height, sin(60) * nut_diameter, boss_height], center = true);
+            }
+        }
+    }
+}
+
+module pulleyBoss()
+{
+    cylinder(boss_height, r = boss_diameter/2, center=true);
+}
+
+module pulleyWheel()
+{
+    difference()
+    {
+        // Wheel
+        cylinder(wheel_height, r = wheel_diameter/2, center=true);
+
+        // Ball links
+        rotate_extrude(convexity = 10)
+        translate([wheel_diameter/2, 0, 0])
+        circle(r = link_diameter/2, center = true, $fn = 16);
+
+        // Balls
+        translate([0, 0, 0])
+        for(i = [1:ball_count])
+        {
+            rotate([0, 0,(360/ball_count) * i])
+            translate([wheel_diameter/2, 0, 0])
+            sphere(r = ball_diameter/2, $fn = 32);
+        }
+    }
+}
+
 module pulley()
 {
     difference()
@@ -56,7 +124,7 @@ module pulley()
         translate([0, 0, pulley_height/-2 + wheel_height/2])
         rotate_extrude(convexity = 10)
         translate([wheel_diameter/2, 0, 0])
-        circle(r = link_diameter/2, center = true, $fn=16);
+        circle(r = link_diameter/2, center = true, $fn = 16);
 
         // Balls
         translate([0, 0, pulley_height/-2 + wheel_height/2])
@@ -64,7 +132,7 @@ module pulley()
         {   
             rotate([0, 0,(360/ball_count) * i])       
             translate([wheel_diameter/2,0,0])
-            sphere(r = ball_diameter/2, $fn=32);
+            sphere(r = ball_diameter/2, $fn = 32);
         }
         
         // Screw and nut holes
