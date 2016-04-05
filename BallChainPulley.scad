@@ -7,41 +7,39 @@ $fn = 128;
 part_spacing = 10;
 
 // Motor dimensions
-shaft_diameter = 5.2; // 5 was measured (it was too tight)
+shaft_diameter = 5.35; // 5 was measured (it was way too tight)
 
 // Ball chain dimensions
-ball_diameter = 3.30; // 3.22 was measured, 3.20 was remeasured (3.3 is used for more "connected" operation)
+ball_diameter = 3.40; // 3.22 was measured, 3.20 was remeasured (3.4 is used for more "connected" operation)
 ball_count = 24;
-ball_spacing = 4; // Ball center-to-center, 4 was measured and estimated
+ball_spacing = 4.25; // Ball center-to-center, 4 was measured and estimated (4.25 is used for better "locking" under load)
 link_diameter = 0.68; // 0.68 was measured
 
 // Screw and nut dimensions
 screw_diameter = 3.05;
-nut_diameter = 6.15; // 6.06 was measaured (increased to 6.15 for ease of assembly)
+nut_diameter = 6.25; // 6.06 was measaured (increased to 6.25 for ease of assembly)
 nut_height = 2.5; // 2.25 was measured (increased to 2.5 for ease of assembly)
 
 // Flare dimensions
-flare_height = 1.75;
+flare_height = 1.0;
 flare_lip_height = flare_height * 1/8;
 flare_angle = 35;
 
-
 // Pulley calculations
 wheel_diameter = ball_count * ball_spacing/PI;
-wheel_height = ball_diameter * 1.1;
+wheel_height = ball_diameter * 1.2;
 flared_wheel_height = wheel_height + 2 * (flare_height + flare_lip_height);
 boss_diameter = shaft_diameter + (nut_height * 2) * 2.5;
 boss_height = nut_diameter;
 pulley_height = flared_wheel_height + boss_height;
 
-
 // Diagnostic output
 echo(str("Pulley height: ", pulley_height));
 echo(str("Pulley diameter: ", wheel_diameter));
 
-
 // Render
 pulley();
+//pulleyWheel();
 
 // Module declarations
 module pulley()
